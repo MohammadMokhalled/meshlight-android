@@ -1,0 +1,42 @@
+# Gradle and Android build output.
+build/
+!build-logic/
+
+# Android/Gradle caches, native build output, and local SDK paths.
+.gradle/
+.kotlin/
+.cxx/
+.externalNativeBuild/
+local.properties
+captures/
+*.apk
+*.aab
+*.ap_
+*.hprof
+
+# Local Android signing credentials. Keep these outside version control.
+*.jks
+*.keystore
+keystore.properties
+key.properties
+
+# Python tooling used by the CI scripts.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local editor settings.
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+# Operating system metadata.
+.DS_Store
+Thumbs.db
+Desktop.ini
+
