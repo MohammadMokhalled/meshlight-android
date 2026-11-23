@@ -2,7 +2,7 @@
 
 # MeshLight for Android
 
-A local Bluetooth Mesh controller for the firmware in `../firmware`. The app uses Kotlin, Jetpack Compose Material 3, Navigation 3, Hilt, Room, DataStore, and the unmodified Nordic Android Mesh library.
+A local Bluetooth Mesh controller for the [MeshLight firmware](https://github.com/MohammadMokhalled/meshlight) (see [firmware compatibility](#firmware-compatibility)). The app uses Kotlin, Jetpack Compose Material 3, Navigation 3, Hilt, Room, DataStore, and the unmodified Nordic Android Mesh library.
 
 ## Use the app
 
@@ -77,14 +77,13 @@ $env:JAVA_HOME = 'C:\Program Files\Android\Android Studio\jbr'
 
 The installable debug APK is `app/build/outputs/apk/debug/app-debug.apk`. Release signing is not configured.
 
-PRs and push CI run all Android builds and automated tests when any file under
-`android-app/` changes. Unchanged PRs skip Android validation; unchanged CI
-reuses validated APKs for the same Android source, or runs the full checks if
-none is available. Download `android-apks` from Actions for debug and unsigned
-release APKs, original build metadata, and checksums. Actions artifacts last
-30 days; final tagged GitHub Releases keep both APKs without automatic expiry.
-Android's app versions remain controlled by its Gradle build file. See
-[CI and reuse details](../docs/06-ci.md#31-android-validation-and-reuse).
+Every PR and push to `main` runs all Android checks (`.github/workflows/ci.yml`):
+host tests, screenshots, lint, coverage, debug and release APK builds, and
+instrumentation tests on an API 37 emulator. The `All checks` job is the required
+status. Pushing a tag `v<versionName>` (for example `v1.0`) runs the same checks and
+publishes a GitHub Release with both APKs and `SHA256SUMS`; the tag must match
+`versionName` in `app/build.gradle.kts`. Actions artifacts last 30 days. Release
+signing is not configured. See [testing and CI](docs/TESTING.md#pr-and-ci-automation).
 
 Local tests cover protocol vectors, malformed statuses, level/transition conversion, planning, scheduling, transaction spacing, encrypted backup compatibility, metadata, offline apply, partial recovery, UI behavior, and state restoration. Robolectric runs UI tests without a device; its Android 16 tests include the required JDK module access flags.
 
@@ -108,6 +107,15 @@ On a connected device or emulator, run:
 ```
 
 The instrumentation runner uses Hilt's test application. Future injected activity tests should use `@HiltAndroidTest` and `HiltAndroidRule`. Database tests exercise Android SQLite. Bluetooth provisioning still requires real BLE hardware.
+
+## Firmware compatibility
+
+This app is developed separately from the [firmware](https://github.com/MohammadMokhalled/meshlight). It expects a light
+node with one element and these models: Generic OnOff (0x1000), Generic Level
+(0x1002), Health Server (0x0002), and the MeshLight vendor model, supporting
+1-339 LEDs per node. Use the firmware from the same time period as the app
+release; changes to the vendor model opcodes or composition in the firmware must
+be matched here. Compatible versions are listed in each GitHub Release's notes.
 
 ## Hardware acceptance before release
 

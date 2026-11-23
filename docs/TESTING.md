@@ -84,25 +84,21 @@ The instrumentation runner uses `HiltTestApplication`; activity tests use `HiltA
 
 ### PR and CI automation
 
-The repository's [shared validation workflow](../../.github/workflows/firmware.yml)
-runs every Android layer when any file under `android-app/` changes. Host tests,
-screenshots, lint, coverage, debug/release APK builds, and compilation of the
+The [CI workflow](../.github/workflows/ci.yml) runs on every PR and push to `main`,
+and is reused by the [release workflow](../.github/workflows/release.yml). Host
+tests, screenshots, lint, coverage, debug/release APK builds, and compilation of the
 instrumentation APK run on Windows. Instrumentation runs on an API 37 x86_64
-Google APIs emulator on Ubuntu. Both jobs verify the workflow's exact Git tree
-and use JDK 25, SDK `android-37.0`, build tools 36.0.0, and the checked-in wrapper.
-CI validates the checked-in screenshot references without updating them.
+Google APIs emulator on Ubuntu. Both use JDK 25, SDK `android-37.0`, build tools
+36.0.0, and the checked-in wrapper. CI validates the checked-in screenshot
+references without updating them. `scripts/ci.py` fails on missing, failed,
+skipped, or duplicated test reports, lint errors, and missing coverage or APKs.
+The `All checks` job is the required status and fails if any job fails or is skipped.
 
-Unchanged PRs skip Android jobs. Unchanged push/tag CI reuses APKs from a
-successful ancestor push run with exactly matching Android source and validated
-checksums/test evidence. If none is available, all Android checks and builds run.
-The required gate rejects unexpected skips or failures. See
-[CI behavior and downloads](../../docs/06-ci.md#31-android-validation-and-reuse).
-
-The `android-apks` Actions artifact contains both debug and unsigned release
-APKs, original build/test metadata, and SHA-256 checksums. Reports and logs are
-uploaded separately, including available diagnostics on failure, for 30 days.
-Final tagged GitHub Releases also contain both APKs permanently. App versions
-remain controlled by the Gradle build file; no release signing is configured.
+The `android-apks` Actions artifact contains both APKs and test metadata. Reports
+and logs are uploaded separately, including diagnostics on failure, for 30 days.
+Pushing a tag `v<versionName>` publishes a GitHub Release with both APKs and
+`SHA256SUMS`. App versions remain controlled by the Gradle build file; no release
+signing is configured.
 
 ### Local output paths
 
